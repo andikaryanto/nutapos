@@ -1,0 +1,93 @@
+# Disable directory browsing
+Options All -Indexes
+
+# ----------------------------------------------------------------------
+# Rewrite engine
+# ----------------------------------------------------------------------
+
+# Turning on the rewrite engine is necessary for the following rules and features.
+# FollowSymLinks must be enabled for this to work.
+<IfModule mod_rewrite.c>
+
+	Options +FollowSymlinks
+	RewriteEngine On
+	RewriteCond %{REQUEST_METHOD} OPTIONS 
+
+	# If you installed CodeIgniter in a subfolder, you will need to
+	# change the following line to match the subfolder you need.
+	# http://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase
+	# RewriteBase /
+	RewriteBase /balimor/
+
+	# Redirect Trailing Slashes... 
+	RewriteCond %{REQUEST_FILENAME} !-d
+    	RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+	# Rewrite "www.example.com -> example.com"
+	RewriteCond %{HTTPS} !=on
+	RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+	RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
+
+	RewriteCond %{REQUEST_METHOD} OPTIONS
+	RewriteRule ^(.*)$ $1 [R=200,L]  
+
+	# Checks to see if the user is attempting to access a valid file,
+    # such as an image or css document, if this isn't true it sends the
+    # request to the front controller, index.php
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ index.php/$1 [L]
+	
+	# Ensure Authorization header is passed along
+    RewriteCond %{HTTP:Authorization} .	
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+	
+	# Allow these directories and files to be displayed directly:
+	RewriteCond $1 ^(index\.php|robots\.txt|favicon\.ico|public|assets|css|js|images)
+	
+	# Header set Access-Control-Allow-Origin "*"
+	# Header set Access-Control-Allow-Methods "GET,PUT,POST,DELETE,OPTIONS"
+	# Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+
+	Header set X-Frame-Options "DENY"	
+	Header set X-Content-Type-Options "nosniff"
+	Header set X-XSS-Protection "1; mode=block"
+	Header set Strict-Transport-Security "max-age=7776000"
+	Header set Cache-Control "no-cache, no-store, must-revalidate"
+	# Header set Set-Cookie "Secure"
+	# Header always edit Set-Cookie (.*) "HTTPOnly; Secure"
+	Header set Referrer-Policy "no-referrer"
+
+</IfModule>
+
+<FilesMatch ".(eot|ttf|otf|woff)">
+</FilesMatch>
+
+<IfModule !mod_rewrite.c>
+    # If we don't have mod_rewrite installed, all 404's
+    # can be sent to index.php, and everything works as normal.
+    ErrorDocument 404 index.php
+</IfModule>
+
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(json|lock|md|txt|xml|neon|dist|yml)$">
+Order allow,deny
+Deny from all
+</FilesMatch>
+
+<FilesMatch "spark">
+Order allow,deny
+Deny from all
+</FilesMatch>
+
+
+RedirectMatch 403 /\.git
+
+# Disable server signature start
+    ServerSignature Off
+# Disable server signature end

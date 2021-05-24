@@ -1,0 +1,6 @@
+1. type "composer update" in root project (need to install composer first if you have not installed it);
+2 setup datatabse and baseUrl in .env as your local server environtment
+
+This app is built with :
+- CodeIgniter 4.0.4
+- ORM Eloquent i built my self (base on CI DB builder, see in vendor/andikaryanto11/ci4orm folder if you already "composer update");
