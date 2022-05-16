@@ -14,7 +14,7 @@
 		"laminas/laminas-escaper": "^2.6",
 		"psr/log": "^1.1",
         "andikaryanto11/ci4orm":"dev-master",
-        "firebase/php-jwt":"^5.2",
+        "firebase/php-jwt":"^6.2",
 		"yidas/phpspreadsheet-helper": "^1.3"
 	},
 	"require-dev": {
